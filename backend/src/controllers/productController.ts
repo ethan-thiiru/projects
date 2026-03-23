@@ -49,9 +49,11 @@ export const createProduct = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-    const { title, description, imageUrl } = req.body;
+    const { title, description, imageUrl } = req.body ?? {};
+    const isNonEmptyString = (v: unknown): v is string =>
+    typeof v === "string" && v.trim().length > 0;
 
-    if (!title || !description || !imageUrl) {
+    if (!isNonEmptyString(title) || !isNonEmptyString(description) || !isNonEmptyString(imageUrl)) {
       res.status(400).json({ error: "Title, description, and imageUrl are required" });
       return;
     }

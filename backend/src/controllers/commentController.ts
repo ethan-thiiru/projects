@@ -9,9 +9,11 @@ export const createComment = async (req: Request, res: Response) => {
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
     const productId = req.params.productId as string;
-    const { content } = req.body;
+    const { content } = req.body ?? {};
 
-    if (!content) return res.status(400).json({ error: "Comment content is required" });
+    if (typeof content !== "string" || content.trim().length === 0) {
+     return res.status(400).json({ error: "Comment content is required" });
+    }
 
     // verify product exists
     const product = await queries.getProductById(productId);
