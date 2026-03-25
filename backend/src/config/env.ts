@@ -12,3 +12,7 @@ export const ENV = {
   CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
   FRONTEND_URL: process.env.FRONTEND_URL,
 };
+if (!process.env.FRONTEND_URL || process.env.FRONTEND_URL === "*") {
+  throw new Error("FRONTEND_URL must be a specific origin, not undefined or '*'");
+};
+
