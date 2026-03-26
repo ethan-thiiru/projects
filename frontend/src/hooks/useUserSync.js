@@ -8,26 +8,26 @@ function useUserSync() {
   const { isSignedIn } = useAuth();
   const { user } = useUser();
 
-  const { mutate: syncUserMutation, isPending, isSuccess, isError } = useMutation({ 
+const { mutate: syncUserMutation, isPending, isSuccess } = useMutation({
     mutationFn: syncUser,
     retry: 2,
-   });
+ });
 
   useEffect(() => {
     const email = user?.primaryEmailAddress?.emailAddress;
     const name = user?.fullName || user?.firstName;
     const imageUrl = user?.imageUrl;
-    
-    if (isSignedIn && user && email && name && imageUrl && !isPending && !isSuccess && !isError) {
+
+    if (isSignedIn && user && email && name && imageUrl && !isPending && !isSuccess) {
       syncUserMutation({
-        email,
-        name,
-        imageUrl,
+       email,
+       name,
+       imageUrl,
       });
     }
-  }, [isSignedIn, user, syncUserMutation, isPending, isSuccess, isError]);
+  }, [isSignedIn, user, syncUserMutation, isPending, isSuccess]);
 
-  return { isSynced: isSuccess, syncError: isError };
+  return { isSynced: isSuccess };
 }
 
 export default useUserSync;
