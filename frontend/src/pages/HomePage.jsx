@@ -18,7 +18,7 @@ function HomePage() {
     );
   }
    return (
-    <div className="spacey-10">
+    <div className="space-y-10">
       {/* HERO */}
       <div className="hero bg-linear-to-br from-base-300 via-base-200 to-base-300 rounded-box overflow-hidden">
         <div className="hero-content flex-col lg:flex-row-reverse gap-10 py-10">
@@ -45,7 +45,7 @@ function HomePage() {
       </div>
 
        {/* PRODUCTS */}
-      <div className="mt-10">
+      <div>
         <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
           <PackageIcon className="size-5 text-primary" />
           All Products
