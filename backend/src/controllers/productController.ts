@@ -31,7 +31,7 @@ export const getMyProducts = async (req: Request, res: Response) => {
 // Get single product by ID (public)
 export const getProductById = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id as string;
+    const { id } = req.params as { id: string };
     const product = await queries.getProductById(id);
 
     if (!product) return res.status(404).json({ error: "Product not found" });
@@ -49,11 +49,9 @@ export const createProduct = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-    const { title, description, imageUrl } = req.body ?? {};
-    const isNonEmptyString = (v: unknown): v is string =>
-    typeof v === "string" && v.trim().length > 0;
+    const { title, description, imageUrl } = req.body;
 
-    if (!isNonEmptyString(title) || !isNonEmptyString(description) || !isNonEmptyString(imageUrl)) {
+    if (!title || !description || !imageUrl) {
       res.status(400).json({ error: "Title, description, and imageUrl are required" });
       return;
     }
@@ -78,7 +76,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-    const id = req.params.id as string;
+    const { id } = req.params as { id: string };
     const { title, description, imageUrl } = req.body;
 
     // Check if product exists and belongs to user
@@ -112,7 +110,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-    const id = req.params.id as string;
+    const { id } = req.params as { id: string };
 
     // Check if product exists and belongs to user
     const existingProduct = await queries.getProductById(id);
