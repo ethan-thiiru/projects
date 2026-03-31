@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
     "engines": {
-    "node": ">=24.14.1"
+    "node": ">=22.x"
     },
   "scripts": {
     "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend && npm run build --prefix backend",
