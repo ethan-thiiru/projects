@@ -7,14 +7,8 @@ if (!ENV.DATABASE_URL) {
   throw new Error("DATABASE_URL is not set in environment variables");
 }
 
-// Update the pool initialization:
-export const pool = new Pool({
-  connectionString: ENV.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-  connectionTimeoutMillis: 30000, // Increased to 30s for Neon Cold Starts
-  idleTimeoutMillis: 30000,
-  max: 10, // Recommended for Neon connection pooling
-});
+// initialize PostgreSQL connection pool
+const pool = new Pool({ connectionString: ENV.DATABASE_URL });
 
 // log when first connection is made
 pool.on("connect", () => {

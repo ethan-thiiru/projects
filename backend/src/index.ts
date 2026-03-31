@@ -32,23 +32,16 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/comments", commentRoutes);
 
-// 1. Find the "if (ENV.NODE_ENV === 'production')" block and replace it:
 if (ENV.NODE_ENV === "production") {
-  const rootDir = process.cwd(); // Points to /app (the root of your project)
-  const frontendDistPath = path.join(rootDir, "frontend", "dist");
+  const __dirname = path.resolve();
 
-  app.use(express.static(frontendDistPath));
+  // serve static files from frontend/dist
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-  // Correct wildcard syntax and API protection
-  app.get("*", (req, res) => {
-    if (req.path.startsWith("/api")) {
-      return res.status(404).json({ error: "API Route not found" });
-    }
-    res.sendFile(path.join(frontendDistPath, "index.html"));
+  // handle SPA routing - send all non-API routes to index.html - react app
+  app.get("/{*any}", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
   });
 }
 
-// 2. Change the app.listen line at the bottom:
-app.listen(ENV.PORT, "0.0.0.0", () => {
-  console.log(`Server is running on PORT: ${ENV.PORT} ✅`);
-});
+app.listen(ENV.PORT, () => console.log("Server is up and running on PORT:", ENV.PORT));
