@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 // 1. ADD 'deleteProduct' to your imports!
-import { createProduct, getAllProducts, getProductById, deleteProduct, getMyProducts } from "../lib/api";
+import { createProduct, getAllProducts, getProductById, deleteProduct, getMyProducts, updateProduct } from "../lib/api";
 
 export const useProducts = () => {
   return useQuery({ queryKey: ["products"], queryFn: getAllProducts });
@@ -39,4 +39,17 @@ export const useDeleteProduct = () => {
 
 export const useMyProducts = () => {
   return useQuery({ queryKey: ["myProducts"], queryFn: getMyProducts });
+};
+
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateProduct,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["myProducts"] });
+    },
+  });
 };
