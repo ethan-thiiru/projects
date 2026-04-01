@@ -11,8 +11,7 @@ import commentRoutes from "./routes/commentRoutes";
 
 const app = express();
 
-app.use(cors({ origin: ENV.FRONTEND_URL, credentials: true }));
-// `credentials: true` allows the frontend to send cookies to the backend so that we can authenticate the user.
+app.use(cors({ origin: "*",}));
 app.use(clerkMiddleware()); // auth obj will be attached to the req
 app.use(express.json()); // parses JSON request bodies.
 app.use(express.urlencoded({ extended: true })); // parses form data (like HTML forms).
@@ -44,4 +43,6 @@ if (ENV.NODE_ENV === "production") {
   });
 }
 
-app.listen(ENV.PORT, () => console.log("Server is up and running on PORT:", ENV.PORT));
+app.listen(process.env.PORT || 3001, () => {
+  console.log("Server running");
+});
