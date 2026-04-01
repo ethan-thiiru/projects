@@ -37,6 +37,7 @@ function HomePage() {
               Share Your <span className="text-primary">Products</span>
             </h1>
             <p className="py-4 text-base-content/60">
+              Ni patanisho.
               Upload, discover, and connect with creators.
             </p>
             <SignInButton mode="modal">
