@@ -11,7 +11,10 @@ import commentRoutes from "./routes/commentRoutes";
 
 const app = express();
 
-app.use(cors({ origin: "*",}));
+app.use(cors({
+  origin: ENV.NODE_ENV === "production" ? ENV.FRONTEND_URL : "*",
+  credentials: true,
+}));
 app.use(clerkMiddleware()); // auth obj will be attached to the req
 app.use(express.json()); // parses JSON request bodies.
 app.use(express.urlencoded({ extended: true })); // parses form data (like HTML forms).
@@ -32,14 +35,14 @@ app.use("/api/products", productRoutes);
 app.use("/api/comments", commentRoutes);
 
 if (ENV.NODE_ENV === "production") {
-  const __dirname = path.resolve();
+  // __dirname here = backend/dist/
+  // frontend/dist is two levels up then into frontend/dist
+  const frontendDist = path.join(__dirname, "../../frontend/dist");
 
-  // serve static files from frontend/dist
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  app.use(express.static(frontendDist));
 
-  // handle SPA routing - send all non-API routes to index.html - react app
   app.get("/{*any}", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+    res.sendFile(path.join(frontendDist, "index.html"));
   });
 }
 
