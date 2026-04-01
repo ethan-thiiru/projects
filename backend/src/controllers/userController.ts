@@ -8,12 +8,13 @@ export async function syncUser(req: Request, res: Response) {
     const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-    const { email, name, imageUrl } = req.body ?? {};
-    const isNonEmptyString = (v: unknown): v is string =>
-    typeof v === "string" && v.trim().length > 0;
+    const body = req.body ?? {};
+    const email = typeof body.email === "string" ? body.email.trim() : "";
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const imageUrl = typeof body.imageUrl === "string" ? body.imageUrl.trim() : "";
 
-    if (!isNonEmptyString(email) || !isNonEmptyString(name) || !isNonEmptyString(imageUrl)) {
-    return res.status(400).json({ error: "Email, name, and imageUrl are required" });
+    if (!email || !name || !imageUrl) {
+      return res.status(400).json({ error: "Email, name, and imageUrl are required" });
     }
 
     const user = await queries.upsertUser({
