@@ -1,39 +1,38 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-// 1. ADD 'deleteProduct' to your imports!
-import { createProduct, getAllProducts, getProductById, deleteProduct, getMyProducts, updateProduct } from "../lib/api";
+import {
+  createProduct,
+  deleteProduct,
+  getAllProducts,
+  getMyProducts,
+  getProductById,
+  updateProduct,
+} from "../lib/api";
 
 export const useProducts = () => {
-  return useQuery({ queryKey: ["products"], queryFn: getAllProducts });
+  const result = useQuery({ queryKey: ["products"], queryFn: getAllProducts });
+  return result;
 };
 
 export const useCreateProduct = () => {
-  const queryClient = useQueryClient();
-  return useMutation({ 
-    mutationFn: createProduct,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-    }
-  });
+  return useMutation({ mutationFn: createProduct });
 };
 
 export const useProduct = (id) => {
   return useQuery({
     queryKey: ["product", id],
     queryFn: () => getProductById(id),
-    enabled: !!id, 
+    enabled: !!id,
   });
 };
 
-// 2. FIX this hook to use the actual API function
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (id) => deleteProduct(id), // ✅ Calls the API function from lib/api
+    mutationFn: deleteProduct,
     onSuccess: () => {
-      // 3. OPTIONAL: Refresh the list so the deleted product disappears immediately
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-    }
+      queryClient.invalidateQueries({ queryKey: ["myProducts"] });
+    },
   });
 };
 

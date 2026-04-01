@@ -8,21 +8,19 @@ export const createComment = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-    const productId = req.params.productId as string;
-    const { content } = req.body ?? {};
+    const { productId } = req.params;
+    const { content } = req.body;
 
-    if (typeof content !== "string" || content.trim().length === 0) {
-     return res.status(400).json({ error: "Comment content is required" });
-    }
+    if (!content) return res.status(400).json({ error: "Comment content is required" });
 
     // verify product exists
-    const product = await queries.getProductById(productId);
+    const product = await queries.getProductById(Array.isArray(productId) ? productId[0] : productId);
     if (!product) return res.status(404).json({ error: "Product not found" });
 
     const comment = await queries.createComment({
       content,
       userId,
-      productId,
+      productId: Array.isArray(productId) ? productId[0] : productId,
     });
 
     res.status(201).json(comment);
@@ -38,17 +36,17 @@ export const deleteComment = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-    const commentId = req.params.commentId as string;
+    const { commentId } = req.params;
 
     // check if comment exists and belongs to user
-    const existingComment = await queries.getCommentById(commentId);
+    const existingComment = await queries.getCommentById(Array.isArray(commentId) ? commentId[0] : commentId);
     if (!existingComment) return res.status(404).json({ error: "Comment not found" });
 
     if (existingComment.userId !== userId) {
       return res.status(403).json({ error: "You can only delete your own comments" });
     }
 
-    await queries.deleteComment(commentId);
+    await queries.deleteComment(Array.isArray(commentId) ? commentId[0] : commentId);
     res.status(200).json({ message: "Comment deleted successfully" });
   } catch (error) {
     console.error("Error deleting comment:", error);
